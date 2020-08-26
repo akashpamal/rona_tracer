@@ -9,6 +9,7 @@ import 'contact.dart';
 import 'dart:collection';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'bluetooth_manager.dart';
+import 'contact_manager.dart';
 
 void main() {
   runApp(MaterialApp(home: Home()));
@@ -21,50 +22,23 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  Map<int, Contact> contactMap;
+  BluetoothManagerStateless bluetoothManager;
 
-  DatabaseHelper databaseHelper;
-
-  BluetoothManager bluetoothManager;
+  ContactManager contactManager;
 
   int homeDisplayNum = 0; // 0 : contacts, 1 : bluetooth
 
   @override
   void initState() {
     super.initState();
-    this.refreshContactMap();
 
-    this.databaseHelper = DatabaseHelper();
-    this.bluetoothManager = BluetoothManager();
-    this.contactMap = new HashMap<int, Contact>();
+    this.bluetoothManager = BluetoothManagerStateless();
+    this.contactManager = ContactManager();
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void refreshContactMap() async {
-    List<Contact> tempList = await databaseHelper.getContactList();
-    for (int i = 0; i < tempList.length; i++) {
-      Contact tempContact = tempList[i];
-      this.contactMap[tempContact.theirID] = tempContact;
-    }
-  }
-
-  Future<int> saveContact(theirID, int count24) async {
-    int result;
-    if (this.contactMap.containsKey(theirID)) {
-      Contact tempContact = this.contactMap[theirID];
-      tempContact.their24HourContactCount = count24;
-      result = await databaseHelper.updateContact(tempContact);
-    } else {
-      Contact tempContact = Contact.withoutTime(count24, theirID);
-      result = await databaseHelper.insertContact(tempContact);
-      this.contactMap[theirID] = tempContact;
-    }
-    print('finished saving contact');
-    return result;
   }
 
   @override
@@ -112,13 +86,19 @@ class _HomeState extends State<Home> {
           this.appropriateHomeList(),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          addNearbyDevicesToContacts();
+        },
+        child: Icon(Icons.refresh),
+      ),
     );
   }
 
   Widget appropriateHomeList() {
     switch (this.homeDisplayNum) {
       case 0:
-        return this.contactsListWidget();
+        return this.contactManager;
         break;
       case 1:
         return this.bluetoothManager;
@@ -127,20 +107,18 @@ class _HomeState extends State<Home> {
     print('this statement should be unreachable');
   }
 
-  Widget contactsListWidget() {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: this.contactMap.length,
-        itemBuilder: (context, index) {
-          int key = this.contactMap.keys.elementAt(index);
-          return Card(
-            child: ListTile(
-              title: Text(
-                this.contactMap[key].toString(),
-              ),
-            ),
-          );
-        });
+  void addNearbyDevicesToContacts() async {
+    List<BluetoothDevice> nearbyDevices = await this.bluetoothManager.updateNearbyDevices();
+
+    print('nearby devices are:');
+    for (BluetoothDevice d in nearbyDevices) {
+      print(d.name);
+    }
+    
+
+//    this.bluetoothManager.updateNearbyDevices().then((value) {
+//      print('nearby devices are $value');
+//    });
   }
+
 }
