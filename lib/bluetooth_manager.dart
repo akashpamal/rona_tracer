@@ -9,6 +9,8 @@ import 'tests/bluetooth_test.dart';
 import 'contact.dart';
 import 'dart:collection';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:convert/convert.dart';
+import 'package:string_to_hex/string_to_hex.dart';
 
 class BluetoothManager extends StatefulWidget {
   BluetoothManager();
@@ -60,7 +62,7 @@ class _BluetoothManagerState extends State<BluetoothManager> {
     List<BluetoothService> services =
         await this.connectedDevice.discoverServices();
     services.forEach((service) {
-      print(service);
+      print('service is: $service');
       this.availableServices.add(service);
     });
     this.setState(() {
@@ -68,19 +70,14 @@ class _BluetoothManagerState extends State<BluetoothManager> {
     });
   }
 
-  void printAvailableCharacteristics() async {
-    print('available characteristics from connected device:');
-//    this.serviceCharacteristics.clear();
-//    List<BluetoothService> characteristics =
-//    await this.connectedDevice.discoverServices();
+  void printAvailableCharacteristics(BluetoothService service) async {
+    print('available characteristics from connected service:');
 
-    this.availableServices.forEach((service) {
-      print(service);
-      this.availableServices.add(service);
-    });
-    this.setState(() {
-      this.btDisplayNum = 2;
-    });
+    var characteristics = service.characteristics;
+    for(BluetoothCharacteristic c in characteristics) {
+      List<int> value = await c.read();
+      print('${c.uuid.toString().toUpperCase().substring(4, 8)} has value ${String.fromCharCodes(value.toList())}');
+    }
   }
 
   Widget nearbyDevicesListWidget() {
@@ -118,11 +115,11 @@ class _BluetoothManagerState extends State<BluetoothManager> {
               onTap: () {
                 print(
                     'device is already connected: ${this.connectedDevice.name}');
-                this.printService(index);
-                printAvailableCharacteristics();
+//                this.printService(index);
+                printAvailableCharacteristics(this.availableServices[index]);
               },
               title: Text(
-                this.availableServices[index].toString(),
+                this.availableServices[index].uuid.toString().toUpperCase().substring(4, 8),
               ),
             ),
           );
@@ -158,11 +155,14 @@ class _BluetoothManagerState extends State<BluetoothManager> {
         );
         break;
       case 1:
-        return Container(height: 500.0, child: this.nearbyDevicesListWidget());
+        return Container(height: 400.0, child: this.nearbyDevicesListWidget());
         break;
       case 2:
         return Container(
             height: 500.0, child: this.availableServicesListWidget());
+        break;
+      default:
+        return Text('invalid btDisplayNum');
         break;
     }
   }

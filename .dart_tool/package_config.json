@@ -248,6 +248,12 @@
       "languageVersion": "2.0"
     },
     {
+      "name": "string_to_hex",
+      "rootUri": "file:///Users/akashpamal/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/string_to_hex-0.1.1+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
+    },
+    {
       "name": "synchronized",
       "rootUri": "file:///Users/akashpamal/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/synchronized-2.2.0+2",
       "packageUri": "lib/",
@@ -296,7 +302,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2020-08-26T17:38:04.049220Z",
+  "generated": "2020-08-26T20:04:59.795435Z",
   "generator": "pub",
   "generatorVersion": "2.9.1"
 }

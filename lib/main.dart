@@ -20,8 +20,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final textField24HourCount = TextEditingController();
-  final textFieldTheirID = TextEditingController();
 
   Map<int, Contact> contactMap;
 
@@ -29,12 +27,12 @@ class _HomeState extends State<Home> {
 
   BluetoothManager bluetoothManager;
 
-  int homeDisplayNum = 1; // 0 : contacts, 1 : bluetooth
+  int homeDisplayNum = 0; // 0 : contacts, 1 : bluetooth
 
   @override
   void initState() {
     super.initState();
-//    this.refreshContactMap();
+    this.refreshContactMap();
 
     this.databaseHelper = DatabaseHelper();
     this.bluetoothManager = BluetoothManager();
@@ -43,8 +41,6 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    textField24HourCount.dispose();
-    textFieldTheirID.dispose();
     super.dispose();
   }
 
@@ -94,26 +90,26 @@ class _HomeState extends State<Home> {
             ),
           ),
           SizedBox(height: 8.0),
-          Container(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: ListTile(
-                    onTap: () {
-                      print('$index was clicked');
-                    },
-                    title: Text(
-                      index.toString(),
-//                nearbyDevicesList[index].name.toString(),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-//          this.bluetoothManager,
+//          Container(
+//            height: 500.0,
+//              child: ListView.builder(
+//                shrinkWrap: true,
+//                itemCount: 10,
+//                itemBuilder: (context, index) {
+//                  return Card(
+//                    child: ListTile(
+//                      onTap: () {
+//                        print('$index was clicked');
+//                      },
+//                      title: Text(
+//                        index.toString(),
+//                      ),
+//                    ),
+//                  );
+//                },
+//              ),
+//          ),
+          this.appropriateHomeList(),
         ],
       ),
     );
@@ -125,8 +121,7 @@ class _HomeState extends State<Home> {
         return this.contactsListWidget();
         break;
       case 1:
-//        return this.bluetoothManager.appropriateBluetoothWidget();
-        return Text('bluetooth widget should be here');
+        return this.bluetoothManager;
         break;
     }
     print('this statement should be unreachable');
