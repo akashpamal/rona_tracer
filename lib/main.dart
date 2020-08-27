@@ -22,7 +22,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  BluetoothManagerStateless bluetoothManager;
+  BluetoothManager bluetoothManager;
 
   ContactManager contactManager;
 
@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    this.bluetoothManager = BluetoothManagerStateless();
+    this.bluetoothManager = BluetoothManager();
     this.contactManager = ContactManager();
   }
 
@@ -117,10 +117,14 @@ class _HomeState extends State<Home> {
       print('device named: ${d.name}');
       bool isPhoneBool = await this.bluetoothManager.deviceIsPhone(d).timeout(Duration(seconds: 5), onTimeout: () {
         print('connecting to device ${d.name} timed out');
+        return false;
       });
 
       String isPhoneString = isPhoneBool ? 'is a phone.' : 'is not a phone.';
       print('${d.name} $isPhoneString');
+
+      if (isPhoneBool) {
+      }
     }
 
 

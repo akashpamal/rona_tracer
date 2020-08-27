@@ -15,15 +15,15 @@ import 'package:string_to_hex/string_to_hex.dart';
 
 
 @deprecated
-class BluetoothManager extends StatefulWidget {
-  BluetoothManager();
+class BluetoothManagerStateful extends StatefulWidget {
+  BluetoothManagerStateful();
 
   @override
-  _BluetoothManagerState createState() => _BluetoothManagerState();
+  _BluetoothManagerStatefulState createState() => _BluetoothManagerStatefulState();
 }
 
 @deprecated
-class _BluetoothManagerState extends State<BluetoothManager> {
+class _BluetoothManagerStatefulState extends State<BluetoothManagerStateful> {
   Set<BluetoothDevice> nearbyDevices = HashSet();
   List<BluetoothService> availableServices = [];
   List<BluetoothCharacteristic> serviceCharacteristics = [];

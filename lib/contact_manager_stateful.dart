@@ -3,16 +3,23 @@ import 'database_helper.dart';
 import 'package:flutter/material.dart';
 import 'dart:collection';
 
-class ContactManager extends StatelessWidget {
+class ContactManagerStateful extends StatefulWidget {
+  @override
+  _ContactManagerStatefulState createState() => _ContactManagerStatefulState();
+}
+
+class _ContactManagerStatefulState extends State<ContactManagerStateful> {
   Map<int, Contact> contactMap;
   DatabaseHelper databaseHelper;
 
-  ContactManagerState() {
+  @override
+  void initState() {
+    super.initState();
     this.databaseHelper = DatabaseHelper();
     this.contactMap = new HashMap<int, Contact>();
     this.refreshContactMap();
   }
-  
+
   void refreshContactMap() async {
     List<Contact> tempList = await databaseHelper.getContactList();
     for (int i = 0; i < tempList.length; i++) {

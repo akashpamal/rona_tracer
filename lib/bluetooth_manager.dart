@@ -14,7 +14,7 @@ import 'package:string_to_hex/string_to_hex.dart';
 import 'dart:async';
 import 'dart:core';
 
-class BluetoothManagerStateless extends StatelessWidget {
+class BluetoothManager extends StatelessWidget {
 
   int btDisplayNum = 1; // 0 : loading, 1 : nearbyDevices, 2 : availableServices
 
