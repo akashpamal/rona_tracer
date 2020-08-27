@@ -108,13 +108,22 @@ class _HomeState extends State<Home> {
   }
 
   void addNearbyDevicesToContacts() async {
-    List<BluetoothDevice> nearbyDevices = await this.bluetoothManager.updateNearbyDevices();
+    List<BluetoothDevice> nearbyDevices = await this.bluetoothManager.getNearbyDevices();
 
-    print('nearby devices are:');
+    print('${nearbyDevices.length} devices found');
+
+    List<Future<bool>> futureBools = [];
     for (BluetoothDevice d in nearbyDevices) {
-      print(d.name);
+      print('device named: ${d.name}');
+      bool isPhoneBool = await this.bluetoothManager.deviceIsPhone(d).timeout(Duration(seconds: 5), onTimeout: () {
+        print('connecting to device ${d.name} timed out');
+      });
+
+      String isPhoneString = isPhoneBool ? 'is a phone.' : 'is not a phone.';
+      print('${d.name} $isPhoneString');
     }
-    
+
+
 
 //    this.bluetoothManager.updateNearbyDevices().then((value) {
 //      print('nearby devices are $value');

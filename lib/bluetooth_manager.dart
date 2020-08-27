@@ -11,207 +11,24 @@ import 'dart:collection';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:convert/convert.dart';
 import 'package:string_to_hex/string_to_hex.dart';
-
-@deprecated
-class BluetoothManager extends StatefulWidget {
-  BluetoothManager();
-
-  @override
-  _BluetoothManagerState createState() => _BluetoothManagerState();
-}
-
-@deprecated
-class _BluetoothManagerState extends State<BluetoothManager> {
-  Set<BluetoothDevice> nearbyDevices = HashSet();
-  List<BluetoothService> availableServices = [];
-  List<BluetoothCharacteristic> serviceCharacteristics = [];
-
-  BluetoothDevice connectedDevice;
-
-  int btDisplayNum = 1; // 0 : loading, 1 : nearbyDevices, 2 : availableServices
-
-  Future<int> updateNearbyDevices() async {
-    print('updating nearby devices...');
-    FlutterBlue flutterBlue = FlutterBlue.instance;
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
-    this.nearbyDevices.clear();
-    int count = 0;
-    flutterBlue.scanResults.listen((results) {
-      count++;
-      print('count is $count');
-      for (ScanResult r in results) {
-//        print('${r.device.name} found! rssi: ${r.rssi}');
-        if (r.device.name != '' || r.rssi >= -80) {
-          this.nearbyDevices.add(r.device);
-        }
-      }
-      // Stop scanning
-    }, onDone: () {
-      print('done scanning');
-    });
-    flutterBlue.stopScan();
-  }
-
-  void updateAvailableServices() async {
-    print('available services from connected device:');
-    this.availableServices.clear();
-    List<BluetoothService> services =
-        await this.connectedDevice.discoverServices();
-    services.forEach((service) {
-      print('service is: $service');
-      this.availableServices.add(service);
-    });
-    this.setState(() {
-      this.btDisplayNum = 2;
-    });
-  }
-
-  void printAvailableCharacteristics(BluetoothService service) async {
-    print('available characteristics from connected service:');
-
-    var characteristics = service.characteristics;
-    for(BluetoothCharacteristic c in characteristics) {
-      List<int> value = await c.read();
-      print('${c.uuid.toString().toUpperCase().substring(4, 8)} has value ${String.fromCharCodes(value.toList())}');
-    }
-  }
-
-  Widget nearbyDevicesListWidget() {
-    print('displaying nearby devices');
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: this.nearbyDevices.length,
-        itemBuilder: (context, index) {
-          List<BluetoothDevice> nearbyDevicesList = this.nearbyDevices.toList();
-          return Card(
-            child: ListTile(
-              onTap: () {
-                this.connectToDevice(nearbyDevicesList[index]);
-              },
-              title: Text(
-                nearbyDevicesList[index].name.toString(),
-//                nearbyDevicesList[index].name.toString(),
-              ),
-            ),
-          );
-        });
-  }
-
-  Widget availableServicesListWidget() {
-    print('displaying available services');
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: this.nearbyDevices.length,
-        itemBuilder: (context, index) {
-          List<BluetoothDevice> nearbyDevicesList = this.nearbyDevices.toList();
-          return Card(
-            child: ListTile(
-              onTap: () {
-                print(
-                    'device is already connected: ${this.connectedDevice.name}');
-//                this.printService(index);
-                printAvailableCharacteristics(this.availableServices[index]);
-              },
-              title: Text(
-                this.availableServices[index].uuid.toString().toUpperCase().substring(4, 8),
-              ),
-            ),
-          );
-        });
-  }
-
-  void connectToDevice(BluetoothDevice device) async {
-    print('connecting to device');
-    await device.connect();
-    this.connectedDevice = device;
-    print('connected to device');
-    this.updateAvailableServices();
-  }
-
-  void printService(int index) async {
-    print('printing service now:');
-    BluetoothService service = this.availableServices[index];
-    print('services are $service');
-    print('service characteristics:');
-    var characteristics = service.characteristics;
-    for(BluetoothCharacteristic c in characteristics) {
-      List<int> value = await c.read();
-      print(value);
-    }
-  }
-
-  Widget appropriateBluetoothList() {
-    switch (this.btDisplayNum) {
-      case 0:
-        return Text(
-          'loading...',
-          style: TextStyle(fontSize: 18.0),
-        );
-        break;
-      case 1:
-        return Container(height: 400.0, child: this.nearbyDevicesListWidget());
-        break;
-      case 2:
-        return Container(
-            height: 500.0, child: this.availableServicesListWidget());
-        break;
-      default:
-        return Text('invalid btDisplayNum');
-        break;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          RaisedButton(
-            onPressed: () {
-              print('button was pressed');
-              this.updateNearbyDevices();
-            },
-            child: Icon(Icons.bluetooth),
-          ),
-          RaisedButton(
-            onPressed: () {
-              print(this.nearbyDevices);
-              setState(() {
-                this.btDisplayNum = 1;
-              });
-            },
-            child: Text('print nearby devices'),
-          ),
-          this.appropriateBluetoothList(),
-        ],
-      ),
-    );
-  }
-}
-
+import 'dart:async';
+import 'dart:core';
 
 class BluetoothManagerStateless extends StatelessWidget {
-  List<BluetoothDevice> nearbyDevices = [];
-  List<BluetoothService> availableServices = [];
-  List<BluetoothCharacteristic> serviceCharacteristics = [];
-
-  BluetoothDevice connectedDevice;
 
   int btDisplayNum = 1; // 0 : loading, 1 : nearbyDevices, 2 : availableServices
 
-  Future<List<BluetoothDevice>> updateNearbyDevices() async {
+  Future<List<BluetoothDevice>> getNearbyDevices() async {
     print('updating nearby devices...');
     FlutterBlue flutterBlue = FlutterBlue.instance;
     flutterBlue.startScan(timeout: Duration(seconds: 4));
-    this.nearbyDevices.clear();
+    Set<BluetoothDevice> nearbyDevices = HashSet();
     flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
 //        print('${r.device.name} found! rssi: ${r.rssi}');
-        if (r.device.name != '' || r.rssi >= -80) {
-          this.nearbyDevices.add(r.device);
+        if (r.device.name != '') {
+//        if (r.device.name != '' || r.rssi >= -80) {
+          nearbyDevices.add(r.device);
         }
       }
       // Stop scanning
@@ -221,142 +38,80 @@ class BluetoothManagerStateless extends StatelessWidget {
     flutterBlue.stopScan();
     return Future.delayed(Duration(seconds: 5), () {
       print('returning nearby devices');
-      return this.nearbyDevices;
+      return nearbyDevices.toList();
     });
   }
 
-  void updateAvailableServices() async {
+  Future<List<BluetoothService>> getAvailableServices(
+      BluetoothDevice connectedDevice) async {
     print('available services from connected device:');
-    this.availableServices.clear();
-    List<BluetoothService> services =
-    await this.connectedDevice.discoverServices();
-    services.forEach((service) {
-      print('service is: $service');
-      this.availableServices.add(service);
-    });
+    List<BluetoothService> services = await connectedDevice.discoverServices();
+//    services.forEach((service) {
+//      print('service is: $service');
+//    });
     print('would setState here with btDisplayNum = 2');
+    return services;
+  }
+
+  List<BluetoothCharacteristic> getCharacteristics(BluetoothService service) {
+    return service.characteristics;
   }
 
   void printAvailableCharacteristics(BluetoothService service) async {
     print('available characteristics from connected service:');
-
     var characteristics = service.characteristics;
-    for(BluetoothCharacteristic c in characteristics) {
+    for (BluetoothCharacteristic c in characteristics) {
       List<int> value = await c.read();
-      print('${c.uuid.toString().toUpperCase().substring(4, 8)} has value ${String.fromCharCodes(value.toList())}');
+      print(
+          '${c.uuid.toString().toUpperCase().substring(4, 8)} has value ${String.fromCharCodes(value.toList())}');
     }
   }
 
-  Widget nearbyDevicesListWidget() {
-    print('displaying nearby devices');
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: this.nearbyDevices.length,
-        itemBuilder: (context, index) {
-          List<BluetoothDevice> nearbyDevicesList = this.nearbyDevices.toList();
-          return Card(
-            child: ListTile(
-              onTap: () {
-                this.connectToDevice(nearbyDevicesList[index]);
-              },
-              title: Text(
-                nearbyDevicesList[index].name.toString(),
-//                nearbyDevicesList[index].name.toString(),
-              ),
-            ),
-          );
-        });
-  }
-
-  Widget availableServicesListWidget() {
-    print('displaying available services');
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: this.nearbyDevices.length,
-        itemBuilder: (context, index) {
-          List<BluetoothDevice> nearbyDevicesList = this.nearbyDevices.toList();
-          return Card(
-            child: ListTile(
-              onTap: () {
-                print(
-                    'device is already connected: ${this.connectedDevice.name}');
-//                this.printService(index);
-                printAvailableCharacteristics(this.availableServices[index]);
-              },
-              title: Text(
-                this.availableServices[index].uuid.toString().toUpperCase().substring(4, 8),
-              ),
-            ),
-          );
-        });
-  }
-
-  void connectToDevice(BluetoothDevice device) async {
+  Future<BluetoothDevice> connectToDevice(BluetoothDevice device) async {
     print('connecting to device');
     await device.connect();
-    this.connectedDevice = device;
     print('connected to device');
-    this.updateAvailableServices();
+    return device;
   }
 
-  void printService(int index) async {
+  void printService(BluetoothService service) async {
     print('printing service now:');
-    BluetoothService service = this.availableServices[index];
     print('services are $service');
     print('service characteristics:');
     var characteristics = service.characteristics;
-    for(BluetoothCharacteristic c in characteristics) {
+    for (BluetoothCharacteristic c in characteristics) {
       List<int> value = await c.read();
       print(value);
     }
   }
 
-  Widget appropriateBluetoothList() {
-    switch (this.btDisplayNum) {
-      case 0:
-        return Text(
-          'loading...',
-          style: TextStyle(fontSize: 18.0),
-        );
-        break;
-      case 1:
-        return Container(height: 400.0, child: this.nearbyDevicesListWidget());
-        break;
-      case 2:
-        return Container(
-            height: 500.0, child: this.availableServicesListWidget());
-        break;
-      default:
-        return Text('invalid btDisplayNum');
-        break;
+  Future<bool> deviceIsPhone(BluetoothDevice device) async {
+    //todo add support for android phones
+    await this.connectToDevice(device);
+    List<BluetoothService> availableServices =
+        await this.getAvailableServices(device);
+    for (BluetoothService service in availableServices) {
+      var characteristics = service.characteristics;
+      for (BluetoothCharacteristic c in characteristics) {
+        List<int> value = await c.read();
+//        print(
+//            '${c.uuid.toString().toUpperCase().substring(4, 8)} has value ${String.fromCharCodes(value.toList())}');
+        if (c.uuid.toString().toUpperCase().substring(4, 8) == '2A24' && String.fromCharCodes(value.toList()).toLowerCase().contains('iphone')) {
+          print('this device is a phone');
+          return true;
+        }
+      }
     }
+    print('device is not a phone');
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          RaisedButton(
-            onPressed: () {
-              print('button was pressed');
-              this.updateNearbyDevices();
-            },
-            child: Icon(Icons.bluetooth),
-          ),
-          RaisedButton(
-            onPressed: () {
-              print(this.nearbyDevices);
-              print('would setState here with btDisplayNum = 1');
-            },
-            child: Text('print nearby devices'),
-          ),
-          this.appropriateBluetoothList(),
-        ],
-      ),
+      child: Text('bluetooth manager stateless'),
     );
   }
+
+
 }
