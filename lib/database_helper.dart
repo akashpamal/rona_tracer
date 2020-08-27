@@ -13,6 +13,7 @@ class DatabaseHelper {
   String colId = 'id';
   String colTheir24HourContactCount = 'their_24_hour_contact_count';
   String colTheirID = 'their_id';
+  String theirName = 'their_name';
   String colDateTime = 'date_time';
 
   DatabaseHelper._createInstance();
@@ -44,7 +45,7 @@ class DatabaseHelper {
   void _createDb(Database db, int newVersion) async {
     await db.execute(
         'CREATE TABLE $contactsTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTheir24HourContactCount INTEGER, '
-            '$colTheirID INTEGER, $colDateTime TEXT)');
+            '$colTheirID INTEGER, $theirName STRING, $colDateTime TEXT)');
   }
 
   Future<List<Map<String, dynamic>>> getContactMapList() async {

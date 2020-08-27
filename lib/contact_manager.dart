@@ -7,28 +7,30 @@ class ContactManager extends StatelessWidget {
   Map<int, Contact> contactMap;
   DatabaseHelper databaseHelper;
 
-  ContactManagerState() {
+  ContactManager() {
     this.databaseHelper = DatabaseHelper();
     this.contactMap = new HashMap<int, Contact>();
     this.refreshContactMap();
   }
-  
+
   void refreshContactMap() async {
     List<Contact> tempList = await databaseHelper.getContactList();
     for (int i = 0; i < tempList.length; i++) {
       Contact tempContact = tempList[i];
       this.contactMap[tempContact.theirID] = tempContact;
     }
+    print('refreshing contact map');
   }
 
-  Future<int> saveContact(theirID, int count24) async {
+  Future<int> addContact(theirID, int count24, String theirName) async {
     int result;
+    print('start saving contact');
     if (this.contactMap.containsKey(theirID)) {
       Contact tempContact = this.contactMap[theirID];
       tempContact.their24HourContactCount = count24;
       result = await databaseHelper.updateContact(tempContact);
     } else {
-      Contact tempContact = Contact.withoutTime(count24, theirID);
+      Contact tempContact = Contact.withoutTime(count24, theirID, theirName);
       result = await databaseHelper.insertContact(tempContact);
       this.contactMap[theirID] = tempContact;
     }

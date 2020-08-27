@@ -21,7 +21,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   BluetoothManager bluetoothManager;
 
   ContactManager contactManager;
@@ -89,6 +88,7 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           addNearbyDevicesToContacts();
+          print('contacts: ${this.contactManager.contactMap}');
         },
         child: Icon(Icons.refresh),
       ),
@@ -108,14 +108,18 @@ class _HomeState extends State<Home> {
   }
 
   void addNearbyDevicesToContacts() async {
-    List<BluetoothDevice> nearbyDevices = await this.bluetoothManager.getNearbyDevices();
+    List<BluetoothDevice> nearbyDevices =
+        await this.bluetoothManager.getNearbyDevices();
 
     print('${nearbyDevices.length} devices found');
 
     List<Future<bool>> futureBools = [];
     for (BluetoothDevice d in nearbyDevices) {
       print('device named: ${d.name}');
-      bool isPhoneBool = await this.bluetoothManager.deviceIsPhone(d).timeout(Duration(seconds: 5), onTimeout: () {
+      bool isPhoneBool = await this
+          .bluetoothManager
+          .deviceIsPhone(d)
+          .timeout(Duration(seconds: 10), onTimeout: () {
         print('connecting to device ${d.name} timed out');
         return false;
       });
@@ -124,14 +128,15 @@ class _HomeState extends State<Home> {
       print('${d.name} $isPhoneString');
 
       if (isPhoneBool) {
+        int theirID = d.name.toString().hashCode;
+        print('their id is $theirID');
+        print('going to invoke addContact method');
+        await this.contactManager.addContact(theirID, 1, d.name);
       }
     }
-
-
 
 //    this.bluetoothManager.updateNearbyDevices().then((value) {
 //      print('nearby devices are $value');
 //    });
   }
-
 }

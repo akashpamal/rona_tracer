@@ -110,7 +110,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		W6+k2Eb92qlh/cSrrkCxFRXe07k=
+		mxkOdtXpVIzyGuuIhwPU9ZjM1YM=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -118,7 +118,7 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		pwMrVYHUMbvvKTnuzouHw7Ed2iA=
+		+thuUVi0oTubogk0wGfm6lgS2y8=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<data>
@@ -142,7 +142,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		59Jm+0YxIJ8RNhJk6YMTO7k6Pfg=
+		LqkDN/Kp9Mons0ztqcX/mfAluFw=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -154,7 +154,7 @@
 		</data>
 		<key>Frameworks/Flutter.framework/Flutter</key>
 		<data>
-		VbbUr91DT7Lkc84JCTJCyFpcoQw=
+		mBtVUoaa+W/+kcuNOZrlm+6xYPs=
 		</data>
 		<key>Frameworks/Flutter.framework/Info.plist</key>
 		<data>
@@ -473,11 +473,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			W6+k2Eb92qlh/cSrrkCxFRXe07k=
+			mxkOdtXpVIzyGuuIhwPU9ZjM1YM=
 			</data>
 			<key>hash2</key>
 			<data>
-			si/9ZExlYTudg+tVZvMMaFqJgynrLhC6Z4YX0YLXkik=
+			ilDgMHJBQ7diJaImi9mtk5mvgdmWEMR7Q2pUa2w2nPI=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -495,11 +495,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			pwMrVYHUMbvvKTnuzouHw7Ed2iA=
+			+thuUVi0oTubogk0wGfm6lgS2y8=
 			</data>
 			<key>hash2</key>
 			<data>
-			DgQzCjJ7w99qT9I08+7va78bmgShwubslfGuyT+mjYo=
+			89R1n+T6vLTuK393d1D+KHg0FatgQGbw7XJw7mF3dx0=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
@@ -561,11 +561,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			59Jm+0YxIJ8RNhJk6YMTO7k6Pfg=
+			LqkDN/Kp9Mons0ztqcX/mfAluFw=
 			</data>
 			<key>hash2</key>
 			<data>
-			Nl4RKOUzMczC+lCSa+Dq1Oz318q46plUyB3FI0bll5I=
+			bxInLFW2D2kHXjte27QlwnAvqJc/8ywnILTgFAFg2Cg=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
@@ -594,11 +594,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			VbbUr91DT7Lkc84JCTJCyFpcoQw=
+			mBtVUoaa+W/+kcuNOZrlm+6xYPs=
 			</data>
 			<key>hash2</key>
 			<data>
-			ZegY1JE8rGZ6CsCiJET7JOiH31WwElUYaT32pMhFeXI=
+			dqjdJnt54XAnD7V2opDobYgq32onvFDiuxrUMPocXyI=
 			</data>
 		</dict>
 		<key>Frameworks/Flutter.framework/Info.plist</key>

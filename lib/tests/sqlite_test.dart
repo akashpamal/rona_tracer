@@ -40,13 +40,13 @@ class _SQLTestState extends State<SQLTest> {
     }
   }
 
-  Future<int> saveContact(int count24, int theirID) async {
+  Future<int> saveContact(int count24, int theirID, String theirName) async {
     if (this.contactList.containsKey(theirID)) {
       Contact tempContact = this.contactList[theirID];
       tempContact.their24HourContactCount = count24;
       this.result = await databaseHelper.updateContact(tempContact);
     } else {
-      Contact tempContact = Contact.withoutTime(count24, theirID);
+      Contact tempContact = Contact.withoutTime(count24, theirID, theirName);
       this.result = await databaseHelper.insertContact(tempContact);
     }
     return result;
@@ -109,7 +109,7 @@ class _SQLTestState extends State<SQLTest> {
                                   int.parse(textField24HourCount.text);
                                   int theirID =
                                   int.parse(textFieldTheirID.text);
-                                  this.saveContact(count24, theirID);
+//                                  this.saveContact(count24, theirID);
                                 },
                                 child: Text(
                                   'Save',

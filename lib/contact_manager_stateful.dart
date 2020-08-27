@@ -28,14 +28,14 @@ class _ContactManagerStatefulState extends State<ContactManagerStateful> {
     }
   }
 
-  Future<int> saveContact(theirID, int count24) async {
+  Future<int> saveContact(theirID, int count24, theirName) async {
     int result;
     if (this.contactMap.containsKey(theirID)) {
       Contact tempContact = this.contactMap[theirID];
       tempContact.their24HourContactCount = count24;
       result = await databaseHelper.updateContact(tempContact);
     } else {
-      Contact tempContact = Contact.withoutTime(count24, theirID);
+      Contact tempContact = Contact.withoutTime(count24, theirID, theirName);
       result = await databaseHelper.insertContact(tempContact);
       this.contactMap[theirID] = tempContact;
     }

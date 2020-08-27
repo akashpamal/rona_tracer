@@ -3,19 +3,21 @@ class Contact {
   int _id;
   int _their24HourContactCount;
   int _theirID;
+  String _theirName;
   String _dateTime;
 
-  Contact(this._their24HourContactCount, this._theirID, this._dateTime);
+  Contact(this._their24HourContactCount, this._theirID, this._theirName, this._dateTime);
 
-  Contact.withoutTime(this._their24HourContactCount, this._theirID) {
+  Contact.withoutTime(this._their24HourContactCount, this._theirID, this._theirName) {
     this._dateTime = DateTime.now().toString();
   }
 
-  Contact.withId(this._id, this._their24HourContactCount, this._theirID, this._dateTime);
+  Contact.withId(this._id, this._their24HourContactCount, this._theirID, this._theirName, this._dateTime);
 
   int get id => _id;
   int get their24HourContactCount => this._their24HourContactCount;
   int get theirID => this._theirID;
+  String get theirName => this._theirName;
   String get dateTime => this._dateTime;
 
   set their24HourContactCount(int newContactCount) {
@@ -30,6 +32,10 @@ class Contact {
     this._dateTime = newDate;
   }
 
+  set theirName(String theirName) {
+    this._theirName = theirName;
+  }
+
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     if (id != null) {
@@ -37,6 +43,7 @@ class Contact {
     }
     map['their_24_hour_contact_count'] = _their24HourContactCount;
     map['their_id'] = _theirID;
+    map['their_name'] = _theirName;
     map['date_time'] = _dateTime;
 
     return map;
@@ -46,6 +53,7 @@ class Contact {
     this._id = map['id'];
     this._their24HourContactCount = map['their_24_hour_contact_count'];
     this._theirID = map['their_id'];
+    this._theirName = map['their_name'];
     this._dateTime = map['date_time'];
   }
 
@@ -59,7 +67,7 @@ class Contact {
     String twoDigitMinutes = twoDigits(elapsedTime.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(elapsedTime.inSeconds.remainder(60));
 
-    return '$twoDigitHours hours, $twoDigitMinutes minutes, and $twoDigitSeconds seconds ago, you contacted $theirID. They contacted $their24HourContactCount people in the last 24 hours.';
+    return '$twoDigitHours hours, $twoDigitMinutes minutes, and $twoDigitSeconds seconds ago, you contacted $theirName. They contacted $their24HourContactCount people in the last 24 hours.';
   }
 
 }
