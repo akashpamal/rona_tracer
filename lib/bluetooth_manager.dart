@@ -25,9 +25,9 @@ class BluetoothManager extends StatelessWidget {
     Set<BluetoothDevice> nearbyDevices = HashSet();
     flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
-//        print('${r.device.name} found! rssi: ${r.rssi}');
-        if (r.device.name != '') {
-//        if (r.device.name != '' || r.rssi >= -80) {
+//        if (r.device.name != '') {
+        if (r.device.name != '' || r.rssi >= -65) {
+          print('${r.device.name} found! rssi: ${r.rssi}');
           nearbyDevices.add(r.device);
         }
       }

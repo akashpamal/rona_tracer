@@ -38,6 +38,13 @@ class ContactManager extends StatelessWidget {
     return result;
   }
 
+  Future<int> deleteAll() async {
+    List<Contact> contactList = await this.databaseHelper.getContactList();
+    contactList.forEach((element) {
+      this.databaseHelper.deleteContact(element.id);
+    });
+  }
+
   Widget contactsListWidget() {
     return ListView.builder(
         scrollDirection: Axis.vertical,

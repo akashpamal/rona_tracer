@@ -67,7 +67,7 @@ class Contact {
     String twoDigitMinutes = twoDigits(elapsedTime.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(elapsedTime.inSeconds.remainder(60));
 
-    return '$twoDigitHours hours, $twoDigitMinutes minutes, and $twoDigitSeconds seconds ago, you contacted $theirName. They contacted $their24HourContactCount people in the last 24 hours.';
+    return '$twoDigitHours hours, $twoDigitMinutes minutes, and $twoDigitSeconds seconds ago, you contacted $theirName.';
   }
 
 }

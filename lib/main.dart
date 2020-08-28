@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
 
   ContactManager contactManager;
 
-  int homeDisplayNum = 0; // 0 : contacts, 1 : bluetooth
+  int homeDisplayNum = 0; // 0 : contacts, 1 : bluetooth, 2 : loading
 
   @override
   void initState() {
@@ -61,6 +61,12 @@ class _HomeState extends State<Home> {
                 style: TextStyle(fontSize: 20),
               ),
             ),
+          ),
+          RaisedButton(
+            onPressed: () {
+              this.contactManager.deleteAll();
+            },
+            child: Text('delete all contacts'),
           ),
           SizedBox(height: 8.0),
 //          Container(
@@ -103,14 +109,25 @@ class _HomeState extends State<Home> {
       case 1:
         return this.bluetoothManager;
         break;
+      case 2:
+        return Text('loading...');
+        break;
     }
     print('this statement should be unreachable');
   }
 
   void addNearbyDevicesToContacts() async {
+    this.setState(() {
+      this.homeDisplayNum = 2;
+    });
+
+
     List<BluetoothDevice> nearbyDevices =
         await this.bluetoothManager.getNearbyDevices();
 
+    nearbyDevices.forEach((element) {
+      print(element.name);
+    });
     print('${nearbyDevices.length} devices found');
 
     List<Future<bool>> futureBools = [];
@@ -132,11 +149,14 @@ class _HomeState extends State<Home> {
         print('their id is $theirID');
         print('going to invoke addContact method');
         await this.contactManager.addContact(theirID, 1, d.name);
+        this.setState(() {});
       }
     }
 
-//    this.bluetoothManager.updateNearbyDevices().then((value) {
-//      print('nearby devices are $value');
-//    });
+    print('done checking nearby devices');
+    setState(() {
+      this.homeDisplayNum = 0;
+      print('rebuilding home widget');
+    });
   }
 }
