@@ -15,7 +15,7 @@ class _SQLTestState extends State<SQLTest> {
   final textFieldTheirID = TextEditingController();
 
   int result;
-  Map<int, Contact> contactList = new HashMap<int, Contact>();
+  Map<String, Contact> contactList = new HashMap<String, Contact>();
 
   DatabaseHelper databaseHelper = DatabaseHelper();
 
@@ -40,7 +40,7 @@ class _SQLTestState extends State<SQLTest> {
     }
   }
 
-  Future<int> saveContact(int count24, int theirID, String theirName) async {
+  Future<int> saveContact(int count24, String theirID, String theirName) async {
     if (this.contactList.containsKey(theirID)) {
       Contact tempContact = this.contactList[theirID];
       tempContact.their24HourContactCount = count24;

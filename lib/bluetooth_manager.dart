@@ -37,7 +37,6 @@ class BluetoothManager extends StatelessWidget {
     });
     flutterBlue.stopScan();
     return Future.delayed(Duration(seconds: 5), () {
-      print('returning nearby devices');
       return nearbyDevices.toList();
     });
   }

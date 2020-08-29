@@ -27,6 +27,8 @@ class _HomeState extends State<Home> {
 
   int homeDisplayNum = 0; // 0 : contacts, 1 : bluetooth, 2 : loading
 
+  String loadingText = 'loading...';
+
   @override
   void initState() {
     super.initState();
@@ -63,8 +65,11 @@ class _HomeState extends State<Home> {
             ),
           ),
           RaisedButton(
-            onPressed: () {
-              this.contactManager.deleteAll();
+            onPressed: () async {
+              await this.contactManager.deleteAll();
+              this.setState(() {
+
+              });
             },
             child: Text('delete all contacts'),
           ),
@@ -93,6 +98,7 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          print('floating action button presed');
           addNearbyDevicesToContacts();
           print('contacts: ${this.contactManager.contactMap}');
         },
@@ -110,7 +116,7 @@ class _HomeState extends State<Home> {
         return this.bluetoothManager;
         break;
       case 2:
-        return Text('loading...');
+        return Text(this.loadingText);
         break;
     }
     print('this statement should be unreachable');
@@ -120,7 +126,6 @@ class _HomeState extends State<Home> {
     this.setState(() {
       this.homeDisplayNum = 2;
     });
-
 
     List<BluetoothDevice> nearbyDevices =
         await this.bluetoothManager.getNearbyDevices();
@@ -133,6 +138,10 @@ class _HomeState extends State<Home> {
     List<Future<bool>> futureBools = [];
     for (BluetoothDevice d in nearbyDevices) {
       print('device named: ${d.name}');
+      this.setState(() {
+        this.homeDisplayNum = 2;
+        this.loadingText = 'processing device named ${d.name}';
+      });
       bool isPhoneBool = await this
           .bluetoothManager
           .deviceIsPhone(d)
@@ -141,15 +150,19 @@ class _HomeState extends State<Home> {
         return false;
       });
 
+
       String isPhoneString = isPhoneBool ? 'is a phone.' : 'is not a phone.';
       print('${d.name} $isPhoneString');
 
       if (isPhoneBool) {
-        int theirID = d.name.toString().hashCode;
+//        int theirID = d.name.toString().hashCode;
+        String theirID = d.id.toString();
         print('their id is $theirID');
-        print('going to invoke addContact method');
+        print('going to invoke addContact method on ${d.name}');
         await this.contactManager.addContact(theirID, 1, d.name);
-        this.setState(() {});
+        this.setState(() {
+          this.homeDisplayNum = 0;
+        });
       }
     }
 

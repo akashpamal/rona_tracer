@@ -2,7 +2,7 @@ import 'dart:core';
 class Contact {
   int _id;
   int _their24HourContactCount;
-  int _theirID;
+  String _theirID;
   String _theirName;
   String _dateTime;
 
@@ -16,7 +16,7 @@ class Contact {
 
   int get id => _id;
   int get their24HourContactCount => this._their24HourContactCount;
-  int get theirID => this._theirID;
+  String get theirID => this._theirID;
   String get theirName => this._theirName;
   String get dateTime => this._dateTime;
 
@@ -24,7 +24,7 @@ class Contact {
       this._their24HourContactCount = newContactCount;
   }
 
-  set theirID(int theirNewID) {
+  set theirID(String theirNewID) {
       this._theirID = theirNewID;
   }
 
@@ -67,7 +67,7 @@ class Contact {
     String twoDigitMinutes = twoDigits(elapsedTime.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(elapsedTime.inSeconds.remainder(60));
 
-    return '$twoDigitHours hours, $twoDigitMinutes minutes, and $twoDigitSeconds seconds ago, you contacted $theirName.';
+    return '$twoDigitHours hours, $twoDigitMinutes minutes, and $twoDigitSeconds seconds ago, you contacted $theirName, with id ${this._theirID}';
   }
 
 }

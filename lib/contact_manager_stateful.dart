@@ -9,14 +9,14 @@ class ContactManagerStateful extends StatefulWidget {
 }
 
 class _ContactManagerStatefulState extends State<ContactManagerStateful> {
-  Map<int, Contact> contactMap;
+  Map<String, Contact> contactMap;
   DatabaseHelper databaseHelper;
 
   @override
   void initState() {
     super.initState();
     this.databaseHelper = DatabaseHelper();
-    this.contactMap = new HashMap<int, Contact>();
+    this.contactMap = new HashMap<String, Contact>();
     this.refreshContactMap();
   }
 
@@ -49,7 +49,7 @@ class _ContactManagerStatefulState extends State<ContactManagerStateful> {
         shrinkWrap: true,
         itemCount: this.contactMap.length,
         itemBuilder: (context, index) {
-          int key = this.contactMap.keys.elementAt(index);
+          String key = this.contactMap.keys.elementAt(index);
           return Card(
             child: ListTile(
               title: Text(

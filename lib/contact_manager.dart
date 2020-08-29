@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'dart:collection';
 
 class ContactManager extends StatelessWidget {
-  Map<int, Contact> contactMap;
+  Map<String, Contact> contactMap;
   DatabaseHelper databaseHelper;
 
   ContactManager() {
     this.databaseHelper = DatabaseHelper();
-    this.contactMap = new HashMap<int, Contact>();
+    this.contactMap = new HashMap<String, Contact>();
     this.refreshContactMap();
   }
 
@@ -24,12 +24,17 @@ class ContactManager extends StatelessWidget {
 
   Future<int> addContact(theirID, int count24, String theirName) async {
     int result;
-    print('start saving contact');
+    print('start saving contact named $theirName');
     if (this.contactMap.containsKey(theirID)) {
+      print('already in database, over-writing');
       Contact tempContact = this.contactMap[theirID];
+      print('tempContact: $tempContact');
       tempContact.their24HourContactCount = count24;
+      tempContact.dateTime = DateTime.now().toString();
+      print('tempContact: $tempContact');
       result = await databaseHelper.updateContact(tempContact);
     } else {
+      print('not in database, adding now');
       Contact tempContact = Contact.withoutTime(count24, theirID, theirName);
       result = await databaseHelper.insertContact(tempContact);
       this.contactMap[theirID] = tempContact;
@@ -51,7 +56,7 @@ class ContactManager extends StatelessWidget {
         shrinkWrap: true,
         itemCount: this.contactMap.length,
         itemBuilder: (context, index) {
-          int key = this.contactMap.keys.elementAt(index);
+          String key = this.contactMap.keys.elementAt(index);
           return Card(
             child: ListTile(
               title: Text(
