@@ -136,16 +136,19 @@ class _HomeState extends State<Home> {
     print('${nearbyDevices.length} devices found');
 
     List<Future<bool>> futureBools = [];
+    //todo scan multiple devices at the same time
     for (BluetoothDevice d in nearbyDevices) {
       print('device named: ${d.name}');
       this.setState(() {
         this.homeDisplayNum = 2;
         this.loadingText = 'processing device named ${d.name}';
+        // todo add info to the ui about whether the device was a phone
       });
       bool isPhoneBool = await this
           .bluetoothManager
           .deviceIsPhone(d)
           .timeout(Duration(seconds: 10), onTimeout: () {
+            //todo fix the timeout i think there's still smth wrong with it
         print('connecting to device ${d.name} timed out');
         return false;
       });
