@@ -25,16 +25,25 @@ class _HomeState extends State<Home> {
 
   ContactManager contactManager;
 
-  int homeDisplayNum = 0; // 0 : contacts, 1 : bluetooth, 2 : loading
+  int homeDisplayNum = 2; // 0 : contacts, 1 : bluetooth, 2 : loading
 
   String loadingText = 'loading...';
+
+  int numNewDevices = 0;
+  int numOldDevices = 0;
 
   @override
   void initState() {
     super.initState();
+    this.initManagers();
+  }
 
+  void initManagers() async {
     this.bluetoothManager = BluetoothManager();
-    this.contactManager = ContactManager();
+    this.contactManager = await ContactManager();
+    this.setState(() {
+      this.homeDisplayNum = 0;
+    });
   }
 
   @override
@@ -68,31 +77,30 @@ class _HomeState extends State<Home> {
             onPressed: () async {
               await this.contactManager.deleteAll();
               this.setState(() {
-
+                print('rebuilding home widget');
               });
             },
             child: Text('delete all contacts'),
           ),
           SizedBox(height: 8.0),
-//          Container(
-//            height: 500.0,
-//              child: ListView.builder(
-//                shrinkWrap: true,
-//                itemCount: 10,
-//                itemBuilder: (context, index) {
-//                  return Card(
-//                    child: ListTile(
-//                      onTap: () {
-//                        print('$index was clicked');
-//                      },
-//                      title: Text(
-//                        index.toString(),
-//                      ),
-//                    ),
-//                  );
-//                },
-//              ),
-//          ),
+          Container(
+            padding: EdgeInsets.all(4.0),
+            color: Colors.blue,
+            child: Text(
+              '${this.numNewDevices} new devices discovered',
+              style: TextStyle(fontSize: 18.0),
+            ),
+          ),
+          SizedBox(
+            height: 8.0,
+          ),
+          Container(
+            color: Colors.blue,
+            child: Text(
+              '${this.numNewDevices + this.numOldDevices} total devices discovered',
+              style: TextStyle(fontSize: 18.0),
+            ),
+          ),
           this.appropriateHomeList(),
         ],
       ),
@@ -125,6 +133,8 @@ class _HomeState extends State<Home> {
   void addNearbyDevicesToContacts() async {
     this.setState(() {
       this.homeDisplayNum = 2;
+      this.numOldDevices = 0;
+      this.numNewDevices = 0;
     });
 
     List<BluetoothDevice> nearbyDevices =
@@ -135,7 +145,8 @@ class _HomeState extends State<Home> {
     });
     print('${nearbyDevices.length} devices found');
 
-    List<Future<bool>> futureBools = [];
+    int numNew = 0;
+    int numOld = 0;
     //todo scan multiple devices at the same time
     for (BluetoothDevice d in nearbyDevices) {
       print('device named: ${d.name}');
@@ -148,11 +159,10 @@ class _HomeState extends State<Home> {
           .bluetoothManager
           .deviceIsPhone(d)
           .timeout(Duration(seconds: 10), onTimeout: () {
-            //todo fix the timeout i think there's still smth wrong with it
+        //todo fix the timeout i think there's still smth wrong with it
         print('connecting to device ${d.name} timed out');
         return false;
       });
-
 
       String isPhoneString = isPhoneBool ? 'is a phone.' : 'is not a phone.';
       print('${d.name} $isPhoneString');
@@ -162,9 +172,17 @@ class _HomeState extends State<Home> {
         String theirID = d.id.toString();
         print('their id is $theirID');
         print('going to invoke addContact method on ${d.name}');
-        await this.contactManager.addContact(theirID, 1, d.name);
+        bool alreadyIn =
+            await this.contactManager.addContact(theirID, 1, d.name);
+        if (alreadyIn) {
+          numOld++;
+        } else {
+          numOld++;
+        }
         this.setState(() {
           this.homeDisplayNum = 0;
+          this.numOldDevices = numOld;
+          this.numNewDevices = numNew;
         });
       }
     }
@@ -172,6 +190,8 @@ class _HomeState extends State<Home> {
     print('done checking nearby devices');
     setState(() {
       this.homeDisplayNum = 0;
+      this.numOldDevices = numOld;
+      this.numNewDevices = numNew;
       print('rebuilding home widget');
     });
   }

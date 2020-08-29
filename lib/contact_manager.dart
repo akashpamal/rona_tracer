@@ -14,16 +14,18 @@ class ContactManager extends StatelessWidget {
   }
 
   void refreshContactMap() async {
+    print('refreshing contact map');
     List<Contact> tempList = await databaseHelper.getContactList();
     for (int i = 0; i < tempList.length; i++) {
       Contact tempContact = tempList[i];
       this.contactMap[tempContact.theirID] = tempContact;
     }
-    print('refreshing contact map');
+    print('contact map: ${this.contactMap}');
   }
 
-  Future<int> addContact(theirID, int count24, String theirName) async {
-    int result;
+  Future<bool> addContact(theirID, int count24, String theirName) async {
+//    int result;
+    bool alreadyIn;
     print('start saving contact named $theirName');
     if (this.contactMap.containsKey(theirID)) {
       print('already in database, over-writing');
@@ -32,21 +34,25 @@ class ContactManager extends StatelessWidget {
       tempContact.their24HourContactCount = count24;
       tempContact.dateTime = DateTime.now().toString();
       print('tempContact: $tempContact');
-      result = await databaseHelper.updateContact(tempContact);
+//      result = await databaseHelper.updateContact(tempContact);
+      alreadyIn = true;
     } else {
       print('not in database, adding now');
       Contact tempContact = Contact.withoutTime(count24, theirID, theirName);
-      result = await databaseHelper.insertContact(tempContact);
+//      result = await databaseHelper.insertContact(tempContact);
+      alreadyIn = false;
       this.contactMap[theirID] = tempContact;
     }
     print('finished saving contact');
-    return result;
+    return alreadyIn;
   }
 
   Future<int> deleteAll() async {
     List<Contact> contactList = await this.databaseHelper.getContactList();
-    contactList.forEach((element) {
-      this.databaseHelper.deleteContact(element.id);
+    contactList.forEach((element) async {
+      this.contactMap.remove(element.theirID);
+      await this.databaseHelper.deleteContact(element.id);
+      print('deleted device with id ${element.id}');
     });
   }
 
